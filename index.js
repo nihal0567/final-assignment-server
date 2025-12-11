@@ -29,7 +29,7 @@ app.get('/', (req, res)=>{
 async function run() {
 
   try {
-    await client.connect();
+
 
     const db = client.db('myDb')
     const dataCollection =  db.collection('products-collection')
@@ -41,7 +41,6 @@ async function run() {
     app.get('/products-collection/:id',async(req, res)=>{
       const { id } = req.params
       console.log(id);
-
       const result = await dataCollection.findOne({_id: new ObjectId(id)})
       res.send({
         success: true,
