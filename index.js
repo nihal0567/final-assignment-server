@@ -13,7 +13,7 @@ app.use(express.json())
 
 const uri = `mongodb+srv://${process.env.VITE_DB_USER}:${process.env.VITE_DB_PASS}@cluster0.ue9fgze.mongodb.net/?appName=Cluster0`;
 
-console.log(uri);
+
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -33,6 +33,14 @@ async function run() {
 
     const db = client.db('myDb')
     const dataCollection =  db.collection('products-collection')
+    const productCollection = db.collection('add-products')
+
+    app.post('/add-products', async(req, res)=>{
+      const products = req.body;
+      const result = await productCollection.insertOne(products)
+      res.send(result)
+
+    })
 
     app.get('/products-collection', async(req, res)=>{
       const result =await dataCollection.find().toArray()
@@ -52,11 +60,7 @@ async function run() {
       console.log(result);
       res.send(result)
     })
-    // app.post('/products-collection', async(req, res)=>{
-    //     const data = req.body
-    //     const result = dataCollection.insertOne()
-    // })
-
+    
 
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
