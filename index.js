@@ -35,12 +35,34 @@ async function run() {
     const dataCollection =  db.collection('products-collection')
     const productCollection = db.collection('add-products')
 
-    app.post('/add-products', async(req, res)=>{
-      const products = req.body;
-      const result = await productCollection.insertOne(products)
+     app.get('/products', async(req, res)=>{
+      const query = {}
+      const {email} = req.query
+      // if (email) {
+      //   query.user?.email = email
+      // }
+      const options = {sort: {createdAt: -1}}
+      const result = await productCollection.find(query, options).toArray()
+      res.send(result)
+    })
+
+    app.post('/products', async(req, res)=>{
+      const productData = req.body;
+      product.createdAt = new Date()
+      console.log(productData);
+      const result = await productCollection.insertOne(productData)
       res.send(result)
 
     })
+   
+
+
+
+
+
+
+
+
 
     app.get('/products-collection', async(req, res)=>{
       const result =await dataCollection.find().toArray()
