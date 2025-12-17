@@ -46,13 +46,26 @@ async function run() {
       res.send(result)
     })
 
+     
+
     app.post('/products', async(req, res)=>{
       const productData = req.body;
-      product.createdAt = new Date()
+      productData.createdAt = new Date()
       console.log(productData);
       const result = await productCollection.insertOne(productData)
       res.send(result)
 
+    })
+
+    app.patch('/products/:id', async(req, res)=>{
+      const id = req.params.id;
+      const updatedProduct = req.body;
+      const query = { _id: new ObjectId(id)}
+      const update = {
+        $set : updatedProduct
+      }
+      const result = await productCollection.updateOne(query, update)
+      res.send(result)
     })
    
     app.delete('/products/:id', async(req, res)=>{
