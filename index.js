@@ -32,8 +32,10 @@ async function run() {
 
 
     const db = client.db('myDb')
-    const dataCollection =  db.collection('products-collection')
+    const usersCollection = db.collection('users')
     const productCollection = db.collection('add-products')
+
+    
 
      app.get('/products', async(req, res)=>{
        console.log(req.email);
@@ -84,28 +86,8 @@ async function run() {
       res.send(result)
     })
 
-
-
-
-
-
-
-
-    app.get('/products-collection', async(req, res)=>{
-      const result =await dataCollection.find().toArray()
-      res.send(result)
-    })
-    app.get('/products-collection/:id',async(req, res)=>{
-      const { id } = req.params
-      console.log(id);
-      const result = await dataCollection.findOne({_id: new ObjectId(id)})
-      res.send({
-        success: true,
-        result
-      })
-    })
     app.get('/limit-products',async(req, res)=>{
-      const result = await dataCollection.find().sort({price: 'asc'}).limit(6).toArray()
+      const result = await productCollection.find().sort({price: 'asc'}).limit(6).toArray()
       console.log(result);
       res.send(result)
     })
