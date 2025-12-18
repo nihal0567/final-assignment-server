@@ -36,17 +36,26 @@ async function run() {
     const productCollection = db.collection('add-products')
 
      app.get('/products', async(req, res)=>{
-      const query = {}
-      const {email} = req.query
-      // if (email) {
-      //   query.user?.email = email
-      // }
+       console.log(req.email);
+       const email = req.query.email
+       const query = {}
+      if (email) {
+        query.email = user?.email
+      }
       const options = {sort: {createdAt: -1}}
       const result = await productCollection.find(query, options).toArray()
       res.send(result)
     })
 
-     
+        app.get('/products/:id',async(req, res)=>{
+      const id  = req.params.id
+      const query = {_id : new ObjectId(id)}
+      const result = await productCollection.findOne(query)
+      res.send({
+        success: true,
+        result
+      })
+    })
 
     app.post('/products', async(req, res)=>{
       const productData = req.body;
