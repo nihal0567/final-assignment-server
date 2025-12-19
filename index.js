@@ -51,6 +51,23 @@ async function run() {
       res.send({ insertedId: result.insertedId.toString() });
     });
 
+    app.patch("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const updated = req.body;
+      const result = await orderCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updated }
+      );
+      res.send(result);
+    });
+
+    app.get("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await orderCollection.findOne(query);
+      res.send(result);
+    });
+
     // Create user
     app.post("/users", async (req, res) => {
       const user = req.body;
@@ -134,7 +151,9 @@ async function run() {
         const orderPrice = Number(paymentInfo.orderPrice);
         if (!orderPrice || orderPrice <= 0) {
           console.error("Invalid orderPrice:", paymentInfo.orderPrice);
-          return res.status(400).json({ error: "Order price is missing or invalid (must be greater than 0)" });
+          return res.status(400).json({
+            error: "Order price is missing or invalid (must be greater than 0)",
+          });
         }
 
         const session = await stripeInstance.checkout.sessions.create({
@@ -145,7 +164,9 @@ async function run() {
                 currency: "usd", // "bdt" if supported by your Stripe account
                 product_data: {
                   name: paymentInfo.productTitle || "Order Payment",
-                  description: `Order for ${paymentInfo.orderQuantity || 1} units`,
+                  description: `Order for ${
+                    paymentInfo.orderQuantity || 1
+                  } units`,
                 },
                 unit_amount: Math.round(orderPrice * 100), // cents
               },
@@ -166,7 +187,9 @@ async function run() {
       } catch (error) {
         console.error("Stripe checkout error:", error.message);
         console.error("Full error details:", error);
-        res.status(500).json({ error: error.message || "Failed to create Stripe session" });
+        res
+          .status(500)
+          .json({ error: error.message || "Failed to create Stripe session" });
       }
     });
 
@@ -201,7 +224,9 @@ async function run() {
     // ====================== STRIPE END ======================
 
     await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
   } catch (error) {
     console.error("Error in run function:", error);
   }
