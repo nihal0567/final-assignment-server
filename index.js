@@ -68,6 +68,61 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/users", async (req, res) => {
+      const result = await usersCollection.find().toArray();
+      res.send(result);
+    });
+
+    // Update user role/status
+    app.patch("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const updated = req.body;
+      const result = await usersCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updated }
+      );
+      res.send(result);
+    });
+
+    // Get all orders (with optional status filter)
+    app.get("/orders", async (req, res) => {
+      const status = req.query.status;
+      const query = status ? { status } : {};
+      const result = await orderCollection
+        .find(query)
+        .sort({ createdAt: -1 })
+        .toArray();
+      res.send(result);
+    });
+
+    app.get('/products', async (req, res) => {
+  const result = await productCollection.find().sort({ createdAt: -1 }).toArray();
+  res.send(result);
+});
+
+// Update product (for showOnHome toggle)
+app.patch('/products/:id', async (req, res) => {
+  const id = req.params.id;
+  const updated = req.body;
+  const result = await productCollection.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: updated }
+  );
+  res.send(result);
+});
+
+// Delete product
+app.delete('/products/:id', async (req, res) => {
+  const id = req.params.id;
+  const result = await productCollection.deleteOne({ _id: new ObjectId(id) });
+  res.send(result);
+});
+
+app.get('/products', async (req, res) => {
+  const result = await productCollection.find().sort({ createdAt: -1 }).toArray();
+  res.send(result);
+});
+
     // Create user
     app.post("/users", async (req, res) => {
       const user = req.body;
