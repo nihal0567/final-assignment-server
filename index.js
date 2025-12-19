@@ -123,6 +123,16 @@ app.get('/products', async (req, res) => {
   res.send(result);
 });
 
+app.patch('/products/:id', async (req, res) => {
+  const id = req.params.id;
+  const updated = req.body;
+  const result = await productCollection.updateOne(
+    { _id: new ObjectId(id) },
+    { $set: updated }
+  );
+  res.send(result);
+});
+
     // Create user
     app.post("/users", async (req, res) => {
       const user = req.body;
